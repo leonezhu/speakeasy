@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ lesson.title }} — SpeakEasy</title>
+<title>{{ title }} — SpeakEasy</title>
 <style>
 /* ========== RESET & BASE ========== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,7 +42,7 @@ body {
 .container {
   max-width: 720px;
   margin: 0 auto;
-  padding: 20px 16px 60px;
+  padding: 20px 16px 80px;
 }
 
 /* ========== HEADER ========== */
@@ -199,7 +199,7 @@ body {
 
 .dialogue-note::before { content: "💡"; }
 
-/* Audio inline indicator */
+/* Audio indicator */
 .audio-indicator {
   position: absolute;
   top: 16px;
@@ -302,46 +302,7 @@ body {
   margin-top: 2px;
 }
 
-/* ========== QUIZ MODE ========== */
-.quiz-prompt {
-  background: var(--surface);
-  border: 2px solid var(--accent);
-  border-radius: var(--radius);
-  padding: 20px 24px;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.quiz-prompt .source-text {
-  font-size: 1.2rem;
-  margin-bottom: 16px;
-}
-
-.quiz-prompt .quiz-answer {
-  font-family: var(--font-ui);
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 10px 20px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.quiz-prompt .quiz-answer:hover { background: var(--accent-dark); }
-
-.quiz-prompt .reveal-text {
-  font-size: 1.05rem;
-  color: var(--accent-dark);
-  font-weight: 600;
-  margin-top: 12px;
-  display: none;
-}
-
-.quiz-prompt.revealed .reveal-text { display: block; }
-
-/* ========== SHADOW MODE OVERLAY ========== */
+/* ========== SHADOW MODE ========== */
 .shadow-mode .dialogue-item { transition: transform 0.2s, border-color 0.3s; }
 .shadow-mode .dialogue-item.active-shadow { transform: scale(1.02); z-index: 1; }
 
@@ -377,7 +338,8 @@ body {
   transition: all 0.2s;
 }
 
-.play-all-bar .play-btn:hover, .play-all-bar .play-btn.active {
+.play-all-bar .play-btn:hover,
+.play-all-bar .play-btn.active {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
@@ -421,9 +383,9 @@ body {
 
   <!-- HEADER -->
   <header class="lesson-header">
-    <div class="lesson-meta">{{ lesson.language_name }} · Level {{ lesson.level_name }} · Unit {{ lesson.unit }} · {{ lesson.theme_icon }} {{ lesson.theme_name }}</div>
-    <h1 class="lesson-title">{{ lesson.title }}</h1>
-    <div class="lesson-scenario">📖 {{ lesson.scenario }}</div>
+    <div class="lesson-meta">{{ lang_name }} · Level {{ level_name }} · Unit {{ unit_num }} · {{ theme_icon }} {{ theme_name }}</div>
+    <h1 class="lesson-title">{{ title }}</h1>
+    <div class="lesson-scenario">📖 {{ scenario }}</div>
   </header>
 
   <!-- CONTROLS -->
@@ -434,9 +396,6 @@ body {
     <button class="ctrl-btn" onclick="toggleMode('hide')" id="btn-hide">
       <span class="icon">🙈</span> Hide Translations
     </button>
-    <button class="ctrl-btn" onclick="toggleMode('quiz')" id="btn-quiz">
-      <span class="icon">🧠</span> Quiz Mode
-    </button>
     <button class="ctrl-btn" onclick="togglePlayAll()" id="btn-play-all">
       <span class="icon">▶️</span> Play All
     </button>
@@ -446,9 +405,9 @@ body {
   <section class="section">
     <h2 class="section-title">📝 Dialogue</h2>
 
-    {% for line in lesson.dialogue %}
-    <div class="dialogue-item speaker-{{ line.speaker|lower }}" id="line-{{ loop.index }}"
-         onclick="playSentence({{ loop.index }})" data-index="{{ loop.index }}">
+    {% for line in dialogue %}
+    <div class="dialogue-item speaker-{{ line.speaker|lower }}" id="line-{{ line.index }}"
+         onclick="playSentence({{ line.index }})" data-index="{{ line.index }}">
       <div class="audio-indicator">
         <div class="audio-bar"></div>
         <div class="audio-bar"></div>
@@ -457,7 +416,7 @@ body {
       </div>
       <div class="speaker-label">{{ line.speaker }}</div>
       <div class="source-text">{{ line.source }}</div>
-      <div class="target-text" id="target-{{ loop.index }}">{{ line.target }}</div>
+      <div class="target-text" id="target-{{ line.index }}">{{ line.target }}</div>
       {% if line.note %}
       <div class="dialogue-note">{{ line.note }}</div>
       {% endif %}
@@ -469,10 +428,10 @@ body {
   <section class="section">
     <h2 class="section-title">📚 Key Vocabulary</h2>
 
-    {% for vocab in lesson.vocabulary %}
+    {% for vocab in vocabulary %}
     <div class="vocab-card">
       <div class="vocab-word">
-        <button class="vocab-play-btn" onclick="playVocab({{ loop.index }})">▶</button>
+        <button class="vocab-play-btn" onclick="playVocab({{ vocab.index }})">▶</button>
         {{ vocab.word }}
       </div>
       <div class="vocab-definition">{{ vocab.definition }}</div>
@@ -482,10 +441,10 @@ body {
   </section>
 
   <!-- CULTURAL NOTES SECTION -->
-  {% if lesson.cultural_notes %}
+  {% if cultural_notes %}
   <section class="section">
     <h2 class="section-title">🌍 Cultural Notes</h2>
-    {% for note in lesson.cultural_notes %}
+    {% for note in cultural_notes %}
     <div class="cultural-note">{{ note }}</div>
     {% endfor %}
   </section>
@@ -493,259 +452,139 @@ body {
 
   <!-- FOOTER -->
   <footer class="lesson-footer">
-    Generated by <a href="https://github.com/yourusername/speakeasy">SpeakEasy</a>
-    · TTS powered by <a href="#">BearEcho</a>
-    · {{ lesson.generation_date }}
+    Generated by <a href="https://github.com/leonezhu/speakeasy">SpeakEasy</a>
+    · {{ generation_date }}
   </footer>
 
 </div>
 
 <!-- PLAY ALL BAR -->
 <div class="play-all-bar" id="play-all-bar">
-  <span class="progress-text" id="play-progress">0 / {{ lesson.dialogue|length }}</span>
-  <button class="play-btn" onclick="togglePlayAll()" id="play-all-toggle">⏸ Pause</button>
-  <button onclick="stopPlayAll()">⏹ Stop</button>
+  <button class="play-btn" onclick="togglePlayAll()">⏸ Pause</button>
+  <span class="progress-text" id="play-all-progress">0 / 0</span>
 </div>
 
-<!-- AUDIO ELEMENTS (generated inline) -->
-{% for line in lesson.dialogue %}
-<audio id="audio-{{ loop.index }}" src="audio/{{ lesson.audio_dir }}/{{ lesson.id }}-{{ loop.index }}.mp3" preload="auto"></audio>
-{% endfor %}
-
-{% for vocab in lesson.vocabulary %}
-<audio id="vocab-audio-{{ loop.index }}" src="audio/{{ lesson.audio_dir }}/{{ lesson.id }}-vocab-{{ loop.index }}.mp3" preload="auto"></audio>
-{% endfor %}
-
 <script>
-// ========== STATE ==========
-const state = {
-  currentMode: 'normal',  // normal, shadow, hide, quiz
-  isPlaying: false,
-  playingIndex: null,
-  isPlayAll: false,
-  playAllIndex: 0,
-  shadowInterval: null
+// ========== AUDIO DATA ==========
+// Audio embedded as base64 data URIs (generated by generate.py)
+const AUDIO_MAP = {
+  {% for line in dialogue %}
+  {% if audio_files.get(line.index) %}
+  {{ line.index }}: "{{ audio_files[line.index] }}",
+  {% endif %}
+  {% endfor %}
 };
 
-const totalLines = {{ lesson.dialogue|length }};
+const VOCAB_AUDIO_MAP = {
+  {% for vocab in vocabulary %}
+  {% if vocab_audio_files and vocab_audio_files.get(vocab.index) %}
+  {{ vocab.index }}: "{{ vocab_audio_files[vocab.index] }}",
+  {% endif %}
+  {% endfor %}
+};
 
-// ========== PLAY SENTENCE ==========
+// ========== STATE ==========
+let currentAudio = null;
+let isShadowMode = false;
+let isHideMode = false;
+let isPlayAll = false;
+let playAllIndex = 0;
+
+// ========== AUDIO PLAYBACK ==========
 function playSentence(index) {
   stopAll();
+  const audioPath = AUDIO_MAP[index];
+  const el = document.getElementById('line-' + index);
+  if (!audioPath || !el) return;
 
-  const audio = document.getElementById('audio-' + index);
-  const item = document.getElementById('line-' + index);
+  currentAudio = new Audio(audioPath);
+  el.classList.add('playing');
 
-  if (!audio) return;
+  if (isShadowMode) el.classList.add('active-shadow');
 
-  item.classList.add('playing');
-  state.isPlaying = true;
-  state.playingIndex = index;
+  currentAudio.play().catch(() => {});
 
-  audio.onended = function() {
-    item.classList.remove('playing');
-    state.isPlaying = false;
-    state.playingIndex = null;
-
-    // If shadow mode, auto-replay with gap
-    if (state.currentMode === 'shadow' && state.isPlayAll) {
-      state.shadowInterval = setTimeout(function() {
-        playSentence(index);
-      }, 2000);  // 2-second gap for repetition
-    } else if (state.isPlayAll) {
-      playNext();
-    }
+  currentAudio.onended = () => {
+    el.classList.remove('playing', 'active-shadow');
+    if (isPlayAll) playNext();
   };
+}
 
-  audio.currentTime = 0;
-  audio.play().catch(function(e) { console.log('Audio play error:', e); });
+function playVocab(index) {
+  stopAll();
+  const audioPath = VOCAB_AUDIO_MAP[index];
+  if (!audioPath) return;
+  currentAudio = new Audio(audioPath);
+  currentAudio.play().catch(() => {});
 }
 
 function stopAll() {
-  if (state.shadowInterval) {
-    clearTimeout(state.shadowInterval);
-    state.shadowInterval = null;
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
   }
-  document.querySelectorAll('.dialogue-item').forEach(function(el) {
-    el.classList.remove('playing', 'looping', 'active-shadow');
+  document.querySelectorAll('.dialogue-item').forEach(el => {
+    el.classList.remove('playing', 'active-shadow');
   });
-  document.querySelectorAll('audio').forEach(function(el) {
-    el.pause();
-    el.currentTime = 0;
-  });
-  state.isPlaying = false;
-  state.playingIndex = null;
 }
 
-// ========== PLAY VOCAB ==========
-function playVocab(index) {
-  const audio = document.getElementById('vocab-audio-' + index);
-  if (!audio) return;
-  audio.currentTime = 0;
-  audio.play().catch(function(e) { console.log('Audio play error:', e); });
+// ========== MODES ==========
+function toggleMode(mode) {
+  const btn = document.getElementById('btn-' + mode);
+  if (mode === 'shadow') {
+    isShadowMode = !isShadowMode;
+    btn.classList.toggle('active', isShadowMode);
+    document.body.classList.toggle('shadow-mode', isShadowMode);
+  } else if (mode === 'hide') {
+    isHideMode = !isHideMode;
+    btn.classList.toggle('active', isHideMode);
+    document.querySelectorAll('.target-text').forEach(el => {
+      el.classList.toggle('hidden-text', isHideMode);
+    });
+  }
 }
 
 // ========== PLAY ALL ==========
 function togglePlayAll() {
-  state.isPlayAll = !state.isPlayAll;
+  isPlayAll = !isPlayAll;
   const bar = document.getElementById('play-all-bar');
-  const btn = document.getElementById('btn-play-all');
-  const toggle = document.getElementById('play-all-toggle');
+  bar.classList.toggle('visible', isPlayAll);
 
-  if (state.isPlayAll) {
-    bar.classList.add('visible');
-    btn.classList.add('active');
-    toggle.textContent = '⏸ Pause';
-
-    if (!state.isPlaying) {
-      state.playAllIndex = 1;
-      playSentence(state.playAllIndex);
-      updateProgress();
-    }
+  if (isPlayAll) {
+    const items = document.querySelectorAll('.dialogue-item');
+    playAllIndex = 0;
+    document.getElementById('play-all-progress').textContent = '0 / ' + items.length;
+    playSentence(items[0].dataset.index);
   } else {
-    bar.classList.remove('visible');
-    btn.classList.remove('active');
-    toggle.textContent = '▶️ Play All';
     stopAll();
   }
 }
 
 function playNext() {
-  if (!state.isPlayAll) return;
-  state.playAllIndex++;
-  if (state.playAllIndex > totalLines) {
-    stopPlayAll();
-    return;
-  }
-  playSentence(state.playAllIndex);
-  updateProgress();
-  scrollToLine(state.playAllIndex);
-}
-
-function stopPlayAll() {
-  state.isPlayAll = false;
-  stopAll();
-  document.getElementById('play-all-bar').classList.remove('visible');
-  document.getElementById('btn-play-all').classList.remove('active');
-  state.playAllIndex = 0;
-  updateProgress();
-}
-
-function updateProgress() {
-  document.getElementById('play-progress').textContent =
-    state.playAllIndex + ' / ' + totalLines;
-}
-
-function scrollToLine(index) {
-  const el = document.getElementById('line-' + index);
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    el.classList.add('active-shadow');
-  }
-}
-
-// ========== MODE TOGGLES ==========
-function toggleMode(mode) {
-  const btns = {
-    shadow: document.getElementById('btn-shadow'),
-    hide: document.getElementById('btn-hide'),
-    quiz: document.getElementById('btn-quiz')
-  };
-
-  // If already active, deactivate
-  if (state.currentMode === mode) {
-    state.currentMode = 'normal';
-    btns[mode].classList.remove('active');
-    applyMode();
-    return;
-  }
-
-  // Deactivate all, activate selected
-  Object.values(btns).forEach(function(b) { b.classList.remove('active'); });
-  btns[mode].classList.add('active');
-  state.currentMode = mode;
-  applyMode();
-}
-
-function applyMode() {
-  // Reset
-  document.body.classList.remove('shadow-mode');
-
-  // Handle translations visibility
-  document.querySelectorAll('.target-text').forEach(function(el) {
-    el.classList.remove('hidden-text');
-  });
-
-  switch (state.currentMode) {
-    case 'hide':
-      document.querySelectorAll('.target-text').forEach(function(el) {
-        el.classList.add('hidden-text');
-      });
-      break;
-
-    case 'shadow':
-      document.body.classList.add('shadow-mode');
-      break;
-
-    case 'quiz':
-      enableQuizMode();
-      break;
-  }
-}
-
-// ========== QUIZ MODE ==========
-function enableQuizMode() {
-  const lines = document.querySelectorAll('.dialogue-item');
-  lines.forEach(function(line, i) {
-    line.onclick = function() { revealQuiz(i + 1); };
-  });
-}
-
-function revealQuiz(index) {
-  const target = document.getElementById('target-' + index);
-  if (target.classList.contains('hidden-text')) {
-    target.classList.remove('hidden-text');
-
-    // Also play audio on reveal
-    playSentence(index);
+  const items = document.querySelectorAll('.dialogue-item');
+  if (playAllIndex < items.length - 1) {
+    playAllIndex++;
+    document.getElementById('play-all-progress').textContent = (playAllIndex + 1) + ' / ' + items.length;
+    playSentence(items[playAllIndex].dataset.index);
+  } else {
+    isPlayAll = false;
+    document.getElementById('play-all-bar').classList.remove('visible');
   }
 }
 
 // ========== KEYBOARD SHORTCUTS ==========
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    stopPlayAll();
-    state.currentMode = 'normal';
-    applyMode();
-    document.querySelectorAll('.ctrl-btn').forEach(function(b) {
-      b.classList.remove('active');
-    });
-  }
-
-  // Space to play/pause current
-  if (e.key === ' ' && e.target === document.body) {
+document.addEventListener('keydown', (e) => {
+  if (e.key === ' ' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
     e.preventDefault();
-    if (state.isPlaying) {
-      stopAll();
-    } else {
-      const next = state.playingIndex ? state.playingIndex : 1;
-      playSentence(next);
-    }
+    togglePlayAll();
   }
-
-  // Arrow keys for navigation
-  if (e.key === 'ArrowRight' && state.playingIndex) {
-    const next = Math.min(state.playingIndex + 1, totalLines);
-    playSentence(next);
+  if (e.key === 'Escape') {
+    if (isPlayAll) togglePlayAll();
+    else stopAll();
   }
-  if (e.key === 'ArrowLeft' && state.playingIndex) {
-    const prev = Math.max(state.playingIndex - 1, 1);
-    playSentence(prev);
-  }
+  if (e.key === 'h' || e.key === 'H') toggleMode('hide');
+  if (e.key === 's' || e.key === 'S') toggleMode('shadow');
 });
-
-// ========== INIT ==========
-applyMode();
 </script>
 
 </body>
