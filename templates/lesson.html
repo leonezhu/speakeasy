@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ lesson.title }} — SpeakEasy</title>
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #FAFAF8;
+  --surface: #FFFFFF;
+  --text: #2C2C2C;
+  --text-secondary: #6B6B6B;
+  --accent: #2563EB;
+  --accent-light: #DBEAFE;
+  --accent-dark: #1D4ED8;
+  --border: #E5E5E5;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font-body: 'Merriweather', 'Georgia', serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --speaker-a: #2563EB;
+  --speaker-b: #D97706;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* ========== LAYOUT ========== */
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+/* ========== HEADER ========== */
+.lesson-header {
+  text-align: center;
+  padding: 32px 0 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+
+.lesson-meta {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.lesson-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.lesson-scenario {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  background: var(--accent-light);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  line-height: 1.6;
+}
+
+/* ========== CONTROLS BAR ========== */
+.controls-bar {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ctrl-btn {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ctrl-btn:hover { border-color: var(--accent); color: var(--accent); }
+.ctrl-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.ctrl-btn .icon { font-size: 1rem; }
+
+/* ========== SECTION ========== */
+.section { margin-bottom: 32px; }
+
+.section-title {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
+
+/* ========== DIALOGUE ========== */
+.dialogue-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.dialogue-item:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+.dialogue-item.playing { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+.dialogue-item.looping { border-color: #D97706; box-shadow: 0 0 0 2px #FEF3C7; }
+
+.dialogue-item.speaker-a { border-left: 4px solid var(--speaker-a); }
+.dialogue-item.speaker-b { border-left: 4px solid var(--speaker-b); }
+
+.speaker-label {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.speaker-a .speaker-label { background: var(--accent-light); color: var(--speaker-a); }
+.speaker-b .speaker-label { background: #FEF3C7; color: var(--speaker-b); }
+
+.source-text {
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.target-text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  transition: all 0.3s;
+}
+
+.target-text.hidden-text {
+  filter: blur(6px);
+  user-select: none;
+  opacity: 0.5;
+}
+
+.target-text:hover.hidden-text {
+  filter: blur(3px);
+  opacity: 0.7;
+}
+
+.dialogue-note {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dialogue-note::before { content: "💡"; }
+
+/* Audio inline indicator */
+.audio-indicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 4px;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+
+.dialogue-item:hover .audio-indicator,
+.dialogue-item.playing .audio-indicator { opacity: 1; }
+
+.audio-bar {
+  width: 3px;
+  height: 16px;
+  background: var(--accent);
+  border-radius: 2px;
+  animation: none;
+}
+
+.dialogue-item.playing .audio-bar { animation: soundbar 0.4s ease infinite alternate; }
+.dialogue-item.playing .audio-bar:nth-child(1) { animation-delay: 0s; }
+.dialogue-item.playing .audio-bar:nth-child(2) { animation-delay: 0.1s; }
+.dialogue-item.playing .audio-bar:nth-child(3) { animation-delay: 0.2s; }
+.dialogue-item.playing .audio-bar:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes soundbar {
+  0% { height: 6px; }
+  100% { height: 16px; }
+}
+
+/* ========== VOCABULARY ========== */
+.vocab-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  transition: box-shadow 0.2s;
+}
+
+.vocab-card:hover { box-shadow: var(--shadow); }
+
+.vocab-word {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vocab-play-btn {
+  font-size: 0.9rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  background: none;
+  border: none;
+  padding: 2px;
+}
+
+.vocab-play-btn:hover { opacity: 1; }
+
+.vocab-definition {
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.vocab-example {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding-left: 12px;
+  border-left: 2px solid var(--accent-light);
+}
+
+/* ========== CULTURAL NOTES ========== */
+.cultural-note {
+  background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  display: flex;
+  gap: 12px;
+}
+
+.cultural-note::before {
+  content: "🌍";
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ========== QUIZ MODE ========== */
+.quiz-prompt {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.quiz-prompt .source-text {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+
+.quiz-prompt .quiz-answer {
+  font-family: var(--font-ui);
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.quiz-prompt .quiz-answer:hover { background: var(--accent-dark); }
+
+.quiz-prompt .reveal-text {
+  font-size: 1.05rem;
+  color: var(--accent-dark);
+  font-weight: 600;
+  margin-top: 12px;
+  display: none;
+}
+
+.quiz-prompt.revealed .reveal-text { display: block; }
+
+/* ========== SHADOW MODE OVERLAY ========== */
+.shadow-mode .dialogue-item { transition: transform 0.2s, border-color 0.3s; }
+.shadow-mode .dialogue-item.active-shadow { transform: scale(1.02); z-index: 1; }
+
+/* ========== PLAY ALL ========== */
+.play-all-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 100;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+  transform: translateY(100%);
+  transition: transform 0.3s;
+}
+
+.play-all-bar.visible { transform: translateY(0); }
+
+.play-all-bar button {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.play-all-bar .play-btn:hover, .play-all-bar .play-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.progress-text {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* ========== FOOTER ========== */
+.lesson-footer {
+  text-align: center;
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.lesson-footer a { color: var(--accent); text-decoration: none; }
+.lesson-footer a:hover { text-decoration: underline; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 480px) {
+  .container { padding: 12px 12px 80px; }
+  .lesson-title { font-size: 1.3rem; }
+  .dialogue-item { padding: 12px 14px; }
+  .source-text { font-size: 1rem; }
+  .controls-bar { gap: 6px; }
+  .ctrl-btn { padding: 6px 12px; font-size: 0.75rem; }
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="lesson-header">
+    <div class="lesson-meta">{{ lesson.language_name }} · Level {{ lesson.level_name }} · Unit {{ lesson.unit }} · {{ lesson.theme_icon }} {{ lesson.theme_name }}</div>
+    <h1 class="lesson-title">{{ lesson.title }}</h1>
+    <div class="lesson-scenario">📖 {{ lesson.scenario }}</div>
+  </header>
+
+  <!-- CONTROLS -->
+  <div class="controls-bar">
+    <button class="ctrl-btn" onclick="toggleMode('shadow')" id="btn-shadow">
+      <span class="icon">🔁</span> Shadow Mode
+    </button>
+    <button class="ctrl-btn" onclick="toggleMode('hide')" id="btn-hide">
+      <span class="icon">🙈</span> Hide Translations
+    </button>
+    <button class="ctrl-btn" onclick="toggleMode('quiz')" id="btn-quiz">
+      <span class="icon">🧠</span> Quiz Mode
+    </button>
+    <button class="ctrl-btn" onclick="togglePlayAll()" id="btn-play-all">
+      <span class="icon">▶️</span> Play All
+    </button>
+  </div>
+
+  <!-- DIALOGUE SECTION -->
+  <section class="section">
+    <h2 class="section-title">📝 Dialogue</h2>
+
+    {% for line in lesson.dialogue %}
+    <div class="dialogue-item speaker-{{ line.speaker|lower }}" id="line-{{ loop.index }}"
+         onclick="playSentence({{ loop.index }})" data-index="{{ loop.index }}">
+      <div class="audio-indicator">
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+      </div>
+      <div class="speaker-label">{{ line.speaker }}</div>
+      <div class="source-text">{{ line.source }}</div>
+      <div class="target-text" id="target-{{ loop.index }}">{{ line.target }}</div>
+      {% if line.note %}
+      <div class="dialogue-note">{{ line.note }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- VOCABULARY SECTION -->
+  <section class="section">
+    <h2 class="section-title">📚 Key Vocabulary</h2>
+
+    {% for vocab in lesson.vocabulary %}
+    <div class="vocab-card">
+      <div class="vocab-word">
+        <button class="vocab-play-btn" onclick="playVocab({{ loop.index }})">▶</button>
+        {{ vocab.word }}
+      </div>
+      <div class="vocab-definition">{{ vocab.definition }}</div>
+      <div class="vocab-example">"{{ vocab.example }}"</div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- CULTURAL NOTES SECTION -->
+  {% if lesson.cultural_notes %}
+  <section class="section">
+    <h2 class="section-title">🌍 Cultural Notes</h2>
+    {% for note in lesson.cultural_notes %}
+    <div class="cultural-note">{{ note }}</div>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  <!-- FOOTER -->
+  <footer class="lesson-footer">
+    Generated by <a href="https://github.com/yourusername/speakeasy">SpeakEasy</a>
+    · TTS powered by <a href="#">BearEcho</a>
+    · {{ lesson.generation_date }}
+  </footer>
+
+</div>
+
+<!-- PLAY ALL BAR -->
+<div class="play-all-bar" id="play-all-bar">
+  <span class="progress-text" id="play-progress">0 / {{ lesson.dialogue|length }}</span>
+  <button class="play-btn" onclick="togglePlayAll()" id="play-all-toggle">⏸ Pause</button>
+  <button onclick="stopPlayAll()">⏹ Stop</button>
+</div>
+
+<!-- AUDIO ELEMENTS (generated inline) -->
+{% for line in lesson.dialogue %}
+<audio id="audio-{{ loop.index }}" src="audio/{{ lesson.audio_dir }}/{{ lesson.id }}-{{ loop.index }}.mp3" preload="auto"></audio>
+{% endfor %}
+
+{% for vocab in lesson.vocabulary %}
+<audio id="vocab-audio-{{ loop.index }}" src="audio/{{ lesson.audio_dir }}/{{ lesson.id }}-vocab-{{ loop.index }}.mp3" preload="auto"></audio>
+{% endfor %}
+
+<script>
+// ========== STATE ==========
+const state = {
+  currentMode: 'normal',  // normal, shadow, hide, quiz
+  isPlaying: false,
+  playingIndex: null,
+  isPlayAll: false,
+  playAllIndex: 0,
+  shadowInterval: null
+};
+
+const totalLines = {{ lesson.dialogue|length }};
+
+// ========== PLAY SENTENCE ==========
+function playSentence(index) {
+  stopAll();
+
+  const audio = document.getElementById('audio-' + index);
+  const item = document.getElementById('line-' + index);
+
+  if (!audio) return;
+
+  item.classList.add('playing');
+  state.isPlaying = true;
+  state.playingIndex = index;
+
+  audio.onended = function() {
+    item.classList.remove('playing');
+    state.isPlaying = false;
+    state.playingIndex = null;
+
+    // If shadow mode, auto-replay with gap
+    if (state.currentMode === 'shadow' && state.isPlayAll) {
+      state.shadowInterval = setTimeout(function() {
+        playSentence(index);
+      }, 2000);  // 2-second gap for repetition
+    } else if (state.isPlayAll) {
+      playNext();
+    }
+  };
+
+  audio.currentTime = 0;
+  audio.play().catch(function(e) { console.log('Audio play error:', e); });
+}
+
+function stopAll() {
+  if (state.shadowInterval) {
+    clearTimeout(state.shadowInterval);
+    state.shadowInterval = null;
+  }
+  document.querySelectorAll('.dialogue-item').forEach(function(el) {
+    el.classList.remove('playing', 'looping', 'active-shadow');
+  });
+  document.querySelectorAll('audio').forEach(function(el) {
+    el.pause();
+    el.currentTime = 0;
+  });
+  state.isPlaying = false;
+  state.playingIndex = null;
+}
+
+// ========== PLAY VOCAB ==========
+function playVocab(index) {
+  const audio = document.getElementById('vocab-audio-' + index);
+  if (!audio) return;
+  audio.currentTime = 0;
+  audio.play().catch(function(e) { console.log('Audio play error:', e); });
+}
+
+// ========== PLAY ALL ==========
+function togglePlayAll() {
+  state.isPlayAll = !state.isPlayAll;
+  const bar = document.getElementById('play-all-bar');
+  const btn = document.getElementById('btn-play-all');
+  const toggle = document.getElementById('play-all-toggle');
+
+  if (state.isPlayAll) {
+    bar.classList.add('visible');
+    btn.classList.add('active');
+    toggle.textContent = '⏸ Pause';
+
+    if (!state.isPlaying) {
+      state.playAllIndex = 1;
+      playSentence(state.playAllIndex);
+      updateProgress();
+    }
+  } else {
+    bar.classList.remove('visible');
+    btn.classList.remove('active');
+    toggle.textContent = '▶️ Play All';
+    stopAll();
+  }
+}
+
+function playNext() {
+  if (!state.isPlayAll) return;
+  state.playAllIndex++;
+  if (state.playAllIndex > totalLines) {
+    stopPlayAll();
+    return;
+  }
+  playSentence(state.playAllIndex);
+  updateProgress();
+  scrollToLine(state.playAllIndex);
+}
+
+function stopPlayAll() {
+  state.isPlayAll = false;
+  stopAll();
+  document.getElementById('play-all-bar').classList.remove('visible');
+  document.getElementById('btn-play-all').classList.remove('active');
+  state.playAllIndex = 0;
+  updateProgress();
+}
+
+function updateProgress() {
+  document.getElementById('play-progress').textContent =
+    state.playAllIndex + ' / ' + totalLines;
+}
+
+function scrollToLine(index) {
+  const el = document.getElementById('line-' + index);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('active-shadow');
+  }
+}
+
+// ========== MODE TOGGLES ==========
+function toggleMode(mode) {
+  const btns = {
+    shadow: document.getElementById('btn-shadow'),
+    hide: document.getElementById('btn-hide'),
+    quiz: document.getElementById('btn-quiz')
+  };
+
+  // If already active, deactivate
+  if (state.currentMode === mode) {
+    state.currentMode = 'normal';
+    btns[mode].classList.remove('active');
+    applyMode();
+    return;
+  }
+
+  // Deactivate all, activate selected
+  Object.values(btns).forEach(function(b) { b.classList.remove('active'); });
+  btns[mode].classList.add('active');
+  state.currentMode = mode;
+  applyMode();
+}
+
+function applyMode() {
+  // Reset
+  document.body.classList.remove('shadow-mode');
+
+  // Handle translations visibility
+  document.querySelectorAll('.target-text').forEach(function(el) {
+    el.classList.remove('hidden-text');
+  });
+
+  switch (state.currentMode) {
+    case 'hide':
+      document.querySelectorAll('.target-text').forEach(function(el) {
+        el.classList.add('hidden-text');
+      });
+      break;
+
+    case 'shadow':
+      document.body.classList.add('shadow-mode');
+      break;
+
+    case 'quiz':
+      enableQuizMode();
+      break;
+  }
+}
+
+// ========== QUIZ MODE ==========
+function enableQuizMode() {
+  const lines = document.querySelectorAll('.dialogue-item');
+  lines.forEach(function(line, i) {
+    line.onclick = function() { revealQuiz(i + 1); };
+  });
+}
+
+function revealQuiz(index) {
+  const target = document.getElementById('target-' + index);
+  if (target.classList.contains('hidden-text')) {
+    target.classList.remove('hidden-text');
+
+    // Also play audio on reveal
+    playSentence(index);
+  }
+}
+
+// ========== KEYBOARD SHORTCUTS ==========
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    stopPlayAll();
+    state.currentMode = 'normal';
+    applyMode();
+    document.querySelectorAll('.ctrl-btn').forEach(function(b) {
+      b.classList.remove('active');
+    });
+  }
+
+  // Space to play/pause current
+  if (e.key === ' ' && e.target === document.body) {
+    e.preventDefault();
+    if (state.isPlaying) {
+      stopAll();
+    } else {
+      const next = state.playingIndex ? state.playingIndex : 1;
+      playSentence(next);
+    }
+  }
+
+  // Arrow keys for navigation
+  if (e.key === 'ArrowRight' && state.playingIndex) {
+    const next = Math.min(state.playingIndex + 1, totalLines);
+    playSentence(next);
+  }
+  if (e.key === 'ArrowLeft' && state.playingIndex) {
+    const prev = Math.max(state.playingIndex - 1, 1);
+    playSentence(prev);
+  }
+});
+
+// ========== INIT ==========
+applyMode();
+</script>
+
+</body>
+</html>

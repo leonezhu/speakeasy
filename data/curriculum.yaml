@@ -1,0 +1,445 @@
+# SpeakEasy Curriculum
+# Progressive oral language learning: English → Cantonese → Sichuanese
+
+meta:
+  version: "1.0.0"
+  last_updated: "2026-06-13"
+  author: "SpeakEasy"
+  description: "Oral language learning curriculum with daily life scenarios"
+
+languages:
+  - code: en
+    name: English
+    native_name: English
+    tts_engine: edge-tts
+    voice: en-US-ChristopherNeural
+    translation_engine: qwen-mt-turbo
+    base_dir: english
+
+  - code: yue
+    name: Cantonese
+    native_name: 粵語
+    tts_engine: qwen-tts
+    voice: WingNeuro
+    translation_engine: glm-4-flash
+    translation_note: "Uses dialect-aware LLM prompts for authentic Cantonese"
+    base_dir: cantonese
+
+  - code: sicuan
+    name: Sichuanese
+    native_name: 四川话
+    tts_engine: dui-tts
+    voice: default
+    translation_engine: glm-4-flash
+    translation_note: "Uses dialect-aware LLM prompts for authentic Sichuanese"
+    base_dir: sichuanese
+
+themes:
+  - id: work
+    name: Work & Office
+    icon: 💼
+  - id: daily
+    name: Daily Life
+    icon: 🏠
+  - id: social
+    name: Social & Friends
+    icon: 🤝
+  - id: travel
+    name: Travel
+    icon: ✈️
+  - id: tech
+    name: Tech & AI
+    icon: 💻
+  - id: food
+    name: Food & Drinks
+    icon: 🍜
+  - id: expressions
+    name: Expressions & Slang
+    icon: 💬
+
+levels:
+  - id: beginner
+    name: Beginner
+    description: "Basic greetings, numbers, simple exchanges. Foundation for all further learning."
+    units: 8
+
+  - id: intermediate
+    name: Intermediate
+    description: "Extended conversations, workplace communication, cultural fluency."
+    units: 8
+
+  - id: advanced
+    name: Advanced
+    description: "Complex dialogues, idioms, humor, and free-form expression."
+    units: 8
+
+# ===========================================================================
+# ENGLISH CURRICULUM
+# ===========================================================================
+curriculum:
+  en:
+    beginner:
+      - unit: 1
+        id: greeting
+        title: "Greetings & Farewells"
+        theme: social
+        scenario: "You meet a colleague for the first time at a company event. You need to greet them, introduce yourself, and say goodbye politely."
+        cultural_notes:
+          - "In English-speaking workplaces, a firm handshake and eye contact are expected during first introductions."
+          - "'How are you?' is often a greeting, not a real question. 'Good, you?' is the standard autopilot response."
+          - "First names are common even in formal settings — don't assume you need to use titles unless the other person does."
+        vocabulary:
+          - word: "How's it going?"
+            definition: "Casual greeting, similar to 'How are you?' but more informal"
+            example: "Hey, how's it going? — Not bad, thanks!"
+          - word: "Nice to meet you"
+            definition: "Polite phrase used when meeting someone for the first time"
+            example: "Hi, I'm Sarah. — Nice to meet you, I'm James."
+          - word: "Catch you later"
+            definition: "Informal way to say goodbye"
+            example: "I gotta run. Catch you later! — Sounds good, see ya!"
+          - word: "What do you do?"
+            definition: "Common way to ask about someone's job"
+            example: "What do you do? — I work in marketing."
+          - word: "By the way"
+            definition: "Used to introduce a new topic or add information"
+            example: "By the way, have you met our new manager?"
+        dialogue:
+          - speaker: A
+            source: "Hey there! How's it going?"
+            target: "嘿！你好吗？"
+            note: "Friendly, casual opening"
+          - speaker: B
+            source: "Not bad, thanks! I don't think we've met. I'm James."
+            target: "还不错，谢谢！我们好像没见过。我叫 James。"
+            note: "Responding and introducing yourself"
+          - speaker: A
+            source: "Nice to meet you, James! I'm Sarah. I just joined the design team last week."
+            target: "很高兴认识你，James！我是 Sarah。我上周刚加入设计团队。"
+            note: "Polite acknowledgment + context"
+          - speaker: B
+            source: "Oh, welcome aboard! What do you do exactly?"
+            target: "哦，欢迎！你具体做什么工作？"
+            note: "Showing interest"
+          - speaker: A
+            source: "I'm a UX designer. I mostly work on the mobile app."
+            target: "我是 UX 设计师。主要做移动端应用。"
+            note: "Simple job description"
+          - speaker: B
+            source: "That sounds interesting. By the way, there's a team lunch tomorrow if you're free."
+            target: "听起来挺有意思。对了，明天有团队午餐，你有空的话可以来。"
+            note: "Invitation, casual transition"
+          - speaker: A
+            source: "That would be great! I'd love to meet everyone."
+            target: "太好了！我也很想认识大家。"
+            note: "Enthusiastic acceptance"
+          - speaker: B
+            source: "Perfect. I'll send you the details. Catch you later!"
+            target: "没问题，我把详情发你。回头见！"
+            note: "Casual goodbye"
+
+      - unit: 2
+        id: introductions
+        title: "Introducing Yourself"
+        theme: social
+        scenario: "You're at a networking event. You need to introduce yourself clearly, talk about your background, and exchange contact info."
+        cultural_notes:
+          - "The 'elevator pitch' — a 30-second self-introduction — is a prized skill in English-speaking business culture."
+          - "It's normal to share your role and company, but avoid oversharing personal details in a first meeting."
+          - "Business cards are less common now; exchanging LinkedIn profiles is the modern equivalent."
+        vocabulary:
+          - word: "I'm originally from..."
+            definition: "Telling someone where you're from originally, not where you live now"
+            example: "I'm originally from Chengdu, but I live in Shenzhen now."
+          - word: "What brings you here?"
+            definition: "Polite way to ask why someone is at an event"
+            example: "What brings you here today? — I'm interested in the AI track."
+          - word: "Let me give you my card"
+            definition: "Offering your contact information"
+            example: "Here, let me give you my card. Feel free to reach out anytime."
+          - word: "I work in/at..."
+            definition: "Standard way to describe where you work"
+            example: "I work at a startup called ByteCraft."
+          - word: "It was nice talking to you"
+            definition: "Polite closing phrase"
+            example: "Well, I should go. It was nice talking to you!"
+        dialogue:
+          - speaker: A
+            source: "Hi, I don't think we've met. I'm Michael."
+            target: "你好，我们好像没见过。我是 Michael。"
+            note: "Opening introduction"
+          - speaker: B
+            source: "Hi Michael, I'm Lisa. What brings you here today?"
+            target: "你好 Michael，我是 Lisa。你今天怎么过来的？"
+            note: "Returning greeting + asking context"
+          - speaker: A
+            source: "I'm a product manager at TechFlow. I'm interested in the AI talks."
+            target: "我是 TechFlow 的产品经理。我对 AI 相关的演讲感兴趣。"
+            note: "Sharing role and interest"
+          - speaker: B
+            source: "Oh cool! I'm a data scientist at the same company. Small world!"
+            target: "哦不错！我是同一家公司的数据科学家。世界真小！"
+            note: "Finding common ground"
+          - speaker: A
+            source: "No way! Which team are you on?"
+            target: "不是吧！你在哪个团队？"
+            note: "Surprised and curious"
+          - speaker: B
+            source: "The recommendations team. Let me give you my card — we should grab coffee sometime."
+            target: "推荐团队。加个微信吧——有空一起喝杯咖啡。"
+            note: "Offering to connect"
+          - speaker: A
+            source: "Definitely! It was really nice talking to you, Lisa."
+            target: "必须的！很高兴跟你聊天，Lisa。"
+            note: "Warm closing"
+          - speaker: B
+            source: "You too. See you at the office, then!"
+            target: "我也是。那公司见！"
+            note: "Casual farewell"
+
+      - unit: 3
+        id: numbers-money
+        title: "Numbers, Prices & Money"
+        theme: daily
+        scenario: "You're shopping at a market and need to understand prices, negotiate, and handle a payment. Numbers are essential for daily transactions."
+        cultural_notes:
+          - "In English, prices are read with 'dollars and cents': $12.50 = 'twelve fifty' or 'twelve dollars and fifty cents'."
+          - "'Can I get a discount?' is normal at markets but weird at chain stores."
+          - "Tipping culture: 15-20% is standard at restaurants in the US; no tipping in the UK or Australia."
+          - "'Cash or card?' is the universal payment question."
+        vocabulary:
+          - word: "How much is this?"
+            definition: "Asking the price of an item"
+            example: "How much is this bag? — It's forty-five dollars."
+          - word: "That's a bit pricey"
+            definition: "Polite way to say something is expensive"
+            example: "Seventy dollars? That's a bit pricey for a T-shirt."
+          - word: "Can you do forty?"
+            definition: "Casual negotiation, asking for a specific price"
+            example: "Can you do forty? — I can do forty-five, that's my best."
+          - word: "I'll take it"
+            definition: "Deciding to buy something"
+            example: "I'll take it. — Great, cash or card?"
+          - word: "Keep the change"
+            definition: "Telling the seller to keep the extra money as a tip"
+            example: "Here's twenty. Keep the change."
+          - word: "Receipt, please"
+            definition: "Asking for the purchase receipt"
+            example: "Could I get a receipt, please?"
+        dialogue:
+          - speaker: Customer
+            source: "Excuse me, how much is this jacket?"
+            target: "请问，这件外套多少钱？"
+            note: "Asking price"
+          - speaker: Seller
+            source: "That one is sixty-five dollars."
+            target: "那件六十五块。"
+            note: "Stating price"
+          - speaker: Customer
+            source: "That's a bit pricey. Can you do fifty?"
+            target: "有点贵。五十块行吗？"
+            note: "Negotiating down"
+          - speaker: Seller
+            source: "Hmm, I can do fifty-five. That's my best price."
+            target: "嗯，五十五吧。最低价了。"
+            note: "Counter-offer"
+          - speaker: Customer
+            source: "Deal! I'll take it. Cash or card?"
+            target: "成交！我要了。现金还是刷卡？"
+            note: "Accepting and asking payment method"
+          - speaker: Seller
+            source: "Whatever works for you. Here's your receipt."
+            target: "都行。这是你的收据。"
+            note: "Flexible payment"
+          - speaker: Customer
+            source: "Thanks! Oh, do you have a bag?"
+            target: "谢谢！哦，有袋子吗？"
+            note: "Practical follow-up"
+          - speaker: Seller
+            source: "Sure, here you go. Have a great day!"
+            target: "当然，给你。祝你愉快！"
+            note: "Friendly sendoff"
+
+      - unit: 4
+        id: food-ordering
+        title: "Ordering Food & Drinks"
+        theme: food
+        scenario: "You're at a casual restaurant. You need to order from the menu, ask about dishes, make special requests, and pay the bill."
+        cultural_notes:
+          - "'I'll have...' is the standard way to order in English, not 'I want...'"
+          - "Dietary restrictions are common and expected: vegetarian, vegan, gluten-free, nut allergy."
+          - "'Check, please' is the universal way to ask for the bill at restaurants."
+          - "In many English-speaking countries, you don't call the waiter by snapping fingers — make eye contact and raise your hand slightly."
+        vocabulary:
+          - word: "What do you recommend?"
+            definition: "Asking the server for suggestions"
+            example: "What do you recommend? — Our pasta is really popular."
+          - word: "I'll have the..."
+            definition: "Standard ordering phrase"
+            example: "I'll have the chicken sandwich, please."
+          - word: "Could I get that to go?"
+            definition: "Asking for takeout / takeaway"
+            example: "Could I get that to go? — Sure, it'll be a few minutes."
+          - word: "No onion, please"
+            definition: "Making a modification to your order"
+            example: "No onion, please. And could you put the sauce on the side?"
+          - word: "Separate checks"
+            definition: "Asking to pay individually rather than splitting the bill"
+            example: "Could we get separate checks, please?"
+          - word: "Is there anything vegetarian?"
+            definition: "Asking about meat-free options"
+            example: "Is there anything vegetarian on the menu?"
+        dialogue:
+          - speaker: Waiter
+            source: "Hi there! Table for one?"
+            target: "你好！一位？"
+            note: "Greeting and seating"
+          - speaker: Customer
+            source: "Yes, please. Can I see the menu?"
+            target: "是的。能看一下菜单吗？"
+            note: "Simple request"
+          - speaker: Waiter
+            source: "Of course. Here you go. Can I get you something to drink?"
+            target: "当然。给你。先来点喝的吗？"
+            note: "Offering drinks first"
+          - speaker: Customer
+            source: "I'll just have water for now, thanks. What do you recommend for food?"
+            target: "先喝水就好，谢谢。有什么推荐的菜吗？"
+            note: "Simple drink + asking for recs"
+          - speaker: Waiter
+            source: "Our fish tacos are really popular. We also have a great mushroom risotto if you prefer vegetarian."
+            target: "我们的鱼塔可很受欢迎。如果你想吃素的，蘑菇烩饭也很棒。"
+            note: "Giving options"
+          - speaker: Customer
+            source: "I'll have the fish tacos, but no onion, please. And the sauce on the side."
+            target: "我要鱼塔可，但不要洋葱。酱汁另外放。"
+            note: "Ordering with modifications"
+          - speaker: Waiter
+            source: "No problem. I'll put that right in. It'll be about fifteen minutes."
+            target: "没问题。我这就下单。大概十五分钟。"
+            note: "Confirming and timing"
+          - speaker: Customer
+            source: "Great, thanks. Oh, could I get that to go when it's ready?"
+            target: "好的谢谢。哦，做好后能打包吗？"
+            note: "Changing to takeout"
+          - speaker: Waiter
+            source: "Absolutely. I'll box it up for you."
+            target: "当然。到时候我给你装盒。"
+            note: "Accommodating"
+
+      - unit: 5
+        id: directions-transport
+        title: "Asking for Directions & Transport"
+        theme: daily
+        scenario: "You're in an unfamiliar city and need to find your way to a hotel. You ask a local for directions, then need to navigate public transport."
+        cultural_notes:
+          - "In English-speaking countries, people often give directions using landmarks ('turn left at the Starbucks') rather than street names."
+          - "'I'm lost' is perfectly acceptable to say — don't be embarrassed."
+          - "On buses/trains, 'Is this the right stop for...?' is safer than trying to read every announcement."
+          - "Distances: 'It's a couple of blocks' means a short walk (2-3 minutes). 'It's a bit of a hike' means it's far."
+        vocabulary:
+          - word: "Could you tell me how to get to...?"
+            definition: "Polite way to ask for directions"
+            example: "Could you tell me how to get to the train station?"
+          - word: "Turn left / right at..."
+            definition: "Basic direction instruction"
+            example: "Turn left at the traffic light, then go straight."
+          - word: "It's on the corner of..."
+            definition: "Describing a location at an intersection"
+            example: "The hotel is on the corner of 5th and Main."
+          - word: "Am I on the right track?"
+            definition: "Checking if you're heading in the right direction"
+            example: "I'm looking for Central Park. Am I on the right track?"
+          - word: "How far is it?"
+            definition: "Asking about distance"
+            example: "How far is it? — About a ten-minute walk."
+          - word: "Which platform?"
+            definition: "Asking about train/subway platform"
+            example: "Which platform for the downtown train?"
+        dialogue:
+          - speaker: Tourist
+            source: "Excuse me, could you tell me how to get to the Grand Hotel?"
+            target: "打扰一下，请问去格兰德酒店怎么走？"
+            note: "Polite direction request"
+          - speaker: Local
+            source: "Sure! Go straight down this road for two blocks."
+            target: "当然！沿着这条路直走两个街区。"
+            note: "Starting the directions"
+          - speaker: Local
+            source: "Then turn right at the traffic light. You'll see a big park on your left."
+            target: "然后在红绿灯右转。你会看到左边有个大公园。"
+            note: "Landmark-based navigation"
+          - speaker: Tourist
+            source: "Turn right at the traffic light, park on the left. Got it."
+            target: "红绿灯右转，公园在左边。明白了。"
+            note: "Repeating back to confirm"
+          - speaker: Local
+            source: "The hotel is just past the park, on the corner. You can't miss it."
+            target: "酒店就在公园后面，拐角处。你肯定能找到。"
+            note: "Confidence-building"
+          - speaker: Tourist
+            source: "How far is it from here?"
+            target: "从这儿走远吗？"
+            note: "Checking distance"
+          - speaker: Local
+            source: "About a ten-minute walk. Or you could take bus number 12 — the stop is right there."
+            target: "大概走十分钟。或者你可以坐12路公交——站点就在那儿。"
+            note: "Alternative transport option"
+          - speaker: Tourist
+            source: "I think I'll walk. Thanks so much for your help!"
+            target: "我走过去吧。非常感谢你的帮忙！"
+            note: "Gracious closing"
+          - speaker: Local
+            source: "No problem at all. Have a great stay!"
+            target: "没事。祝你住得愉快！"
+            note: "Warm farewell"
+
+    intermediate:
+      - unit: 1
+        id: meetings
+        title: "Running & Participating in Meetings"
+        theme: work
+        scenario: "You're leading a project update meeting. You need to open the meeting, present progress, invite discussion, and close with action items."
+        placeholder: true
+        notes: "To be expanded with full dialogue and vocabulary"
+
+      - unit: 2
+        id: negotiation
+        title: "Negotiation & Persuasion"
+        theme: work
+        scenario: "You're negotiating a project timeline with a client. You need to push back on unrealistic deadlines while maintaining a positive relationship."
+        placeholder: true
+
+    advanced:
+      - unit: 1
+        id: storytelling
+        title: "Telling Stories & Narratives"
+        theme: expressions
+        scenario: "You're at a dinner party and someone asks you to share an interesting experience. You need to tell a compelling story with proper sequencing and emotion."
+        placeholder: true
+
+  # ===========================================================================
+  # CANTONESE CURRICULUM (stub — to be expanded)
+  # ===========================================================================
+  yue:
+    beginner:
+      - unit: 1
+        id: greeting-yue
+        title: "粵語問候 — Greetings in Cantonese"
+        theme: social
+        scenario: "你第一次去香港，在茶餐廳點餐時需要跟服務員打招呼。"
+        placeholder: true
+        notes: "Cantonese greetings differ from Mandarin. 你好 is fine, but 早晨 (good morning) and 食咗飯未呀 (have you eaten?) are more authentic."
+
+  # ===========================================================================
+  # SICHUANESE CURRICULUM (stub — to be expanded)
+  # ===========================================================================
+  sicuan:
+    beginner:
+      - unit: 1
+        id: greeting-sicuan
+        title: "四川話問候 — Greetings in Sichuanese"
+        theme: social
+        scenario: "你回到成都老家，跟邻居打招呼。"
+        placeholder: true
+        notes: "Sichuanese uses 你吃了吗 as a genuine greeting. The response 你吃了没？吃了的 is almost ritualistic."
